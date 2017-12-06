@@ -45,7 +45,6 @@ app.use('/books', bookRoutes)
 
 // eslint-disable-next-line max-params
 app.use((err, _req, res, _next) => {
-  console.log("Something is wrong " + err.status + err.message);
   if (err.status && err.message) {
     return res
       .status(err.status)
