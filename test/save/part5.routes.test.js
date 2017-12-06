@@ -44,7 +44,7 @@ suite('part5 routes favorites', addDatabaseHooks(() => {
           bookId: 1,
           userId: 1,
           createdAt: '2016-06-26T14:26:16.000Z',
-          updatedAt: '2016-06-26T14:26:16.000Z',
+          updated_at: '2016-06-26T14:26:16.000Z',
           title: 'JavaScript, The Good Parts',
           author: 'Douglas Crockford',
           genre: 'JavaScript',
@@ -79,7 +79,7 @@ suite('part5 routes favorites', addDatabaseHooks(() => {
         .expect('Content-Type', /json/)
         .expect((res) => {
           delete res.body.createdAt;
-          delete res.body.updatedAt;
+          delete res.body.updated_at;
         })
         .expect(200, { id: 2, bookId: 2, userId: 1 }, done);
     });
@@ -93,7 +93,7 @@ suite('part5 routes favorites', addDatabaseHooks(() => {
         .expect('Content-Type', /json/)
         .expect((res) => {
           delete res.body.createdAt;
-          delete res.body.updatedAt;
+          delete res.body.updated_at;
         })
         .expect(200, { bookId: 1, userId: 1 }, done);
     });

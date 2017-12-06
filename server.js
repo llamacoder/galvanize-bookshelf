@@ -4,14 +4,17 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
-const express = require('express');
-const app = express();
-
-app.disable('x-powered-by');
-
-const bodyParser = require('body-parser');
+const express = require('express')
+const app = express()
+const bodyParser = require('body-parser')
+const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
-const morgan = require('morgan');
+const port = process.env.PORT || 3000;
+const path = require('path');
+
+app.disable('x-powered-by')
+app.use(bodyParser.json())
+app.use(cookieParser());
 
 switch (app.get('env')) {
   case 'development':
@@ -25,51 +28,39 @@ switch (app.get('env')) {
   default:
 }
 
-app.use(bodyParser.json());
-app.use(cookieParser());
-
-const path = require('path');
-
 app.use(express.static(path.join('public')));
 
-// CSRF protection
-app.use((req, res, next) => {
-  if (/json/.test(req.get('Accept'))) {
-    return next();
-  }
+// CSRF protection - this makes it break!!!!!
+// app.use((req, res, next) => {
+//   if (/json/.test(req.get('Accept'))) {
+//     return next();
+//   }
+//
+//   res.sendStatus(406);
+// });
 
-  res.sendStatus(406);
-});
 
-const books = require('./routes/books');
-const favorites = require('./routes/favorites');
-const token = require('./routes/token');
-const users = require('./routes/users');
-
-app.use(books);
-app.use(favorites);
-app.use(token);
-app.use(users);
-
-app.use((_req, res) => {
-  res.sendStatus(404);
-});
+const bookRoutes = require('./routes/books')
+app.use('/books', bookRoutes)
 
 // eslint-disable-next-line max-params
 app.use((err, _req, res, _next) => {
-  if (err.output && err.output.statusCode) {
+  console.log("Something is wrong " + err.status + err.message);
+  if (err.status && err.message) {
     return res
-      .status(err.output.statusCode)
+      .status(err.status)
       .set('Content-Type', 'text/plain')
       .send(err.message);
   }
 
   // eslint-disable-next-line no-console
-  console.error(err.stack);
+  console.error("In app err handler, stack is " + err.stack);
   res.sendStatus(500);
 });
 
-const port = process.env.PORT || 8000;
+app.use((req, res, next) => {
+  res.status(404).json({ error: "Not Found"   })
+})
 
 app.listen(port, () => {
   if (app.get('env') !== 'test') {
@@ -78,4 +69,4 @@ app.listen(port, () => {
   }
 });
 
-module.exports = app;
+module.exports = app

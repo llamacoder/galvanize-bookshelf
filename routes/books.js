@@ -1,10 +1,13 @@
 'use strict';
 
-const express = require('express');
+const express = require('express')
+const router = express.Router()
+const ctrl = require('../controllers/books')
 
-// eslint-disable-next-line new-cap
-const router = express.Router();
+router.get('/', ctrl.getAll)
+router.post('/', ctrl.create)
+router.get('/:id', ctrl.getOne)
+router.patch('/:id', ctrl.updateOne)
+router.delete('/:id', ctrl.deleteOne)
 
-// YOUR CODE HERE
-
-module.exports = router;
+module.exports = router
